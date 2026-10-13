@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三娑罗 — 삼사라</title>
+<meta name="description" content="동양풍 자캐 커뮤니티 三娑罗">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Nanum+Brush+Script&family=Nanum+Pen+Script&family=Noto+Serif+KR:wght@400;600&family=Song+Myung&family=Yuji+Boku&family=Zhi+Mang+Xing&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home" class="home-only" data-embers data-nofooter>
+
+<section class="hero">
+  <!-- 메인 영상: assets/video/main.mp4 를 바꾸면 영상이 바뀌어요 -->
+  <div class="hero-video">
+    <video id="hero-video" src="assets/video/main.mp4" autoplay muted loop playsinline preload="auto"></video>
+  </div>
+
+  <div class="hero-copy">
+    <div class="eyebrow" id="motto">Archive of Crimson Talismans</div>
+    <div class="hero-title"><h1 id="hero-name"></h1></div>
+    <div class="hero-sub"><span class="hs-1">무릇 탄생이란 타인의 종말을 제 이름으로 부르는 일인지라</span><span class="hs-2">서울이 죽고 내가 태어난다</span></div>
+    <div class="cta">
+      <a class="btn lg" href="https://forms.gle/QaKNqpV2xFK4YtNf6" target="_blank" rel="noopener noreferrer">신청서 제출</a>
+      <a class="btn ghost lg" href="world.html">세계관 읽기</a>
+      <a class="btn ghost lg" href="https://samsara-ecru.vercel.app/" target="_blank" rel="noopener noreferrer">튜토리얼</a>
+    </div>
+  </div>
+
+  <div class="hero-side">
+    <button class="sound-btn" id="sound" aria-pressed="false"><span class="bars"><i></i><i></i><i></i></span><span id="sound-t">SOUND OFF</span></button>
+  </div>
+</section>
+
+<script src="assets/js/site.js"></script><script>
+App.ready.then(async () => {
+  const C = SITE_CONFIG;
+  $('#motto').textContent = C.siteMotto || '';
+  $('#hero-name').innerHTML = [...(C.siteName || '')].map((ch, i) => `<span style="--i:${i}">${esc(ch)}</span>`).join('');
+  // 영상 소리 켜고 끄기 (브라우저 정책상 처음엔 음소거로 자동재생)
+  const vid = $('#hero-video'), snd = $('#sound');
+  snd.onclick = () => {
+    vid.muted = !vid.muted; if (!vid.muted) vid.play();
+    snd.classList.toggle('on', !vid.muted); snd.setAttribute('aria-pressed', String(!vid.muted));
+    $('#sound-t').textContent = vid.muted ? 'SOUND OFF' : 'SOUND ON';
+    dispatchEvent(new CustomEvent('naru:video-sound', { detail: !vid.muted }));
+  };
+  if (REDUCED) vid.pause();
+});
+</script>
+</body>
+</html>

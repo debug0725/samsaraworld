@@ -1,0 +1,133 @@
+/* ================================================================
+   卷三 망량 — 재난문자 · 글자 깨짐 · 점점 짙어지는 VHS
+   VHS 는 처음엔 없다가, 글자가 깨질수록 함께 짙어져요.
+   --v (0 → 1) 하나로 모든 효과의 세기가 정해져요 (haunt.js 가 부드럽게 올려요).
+   지지직거리는 잡음보다는 — 색이 갈라지고, 번지고, 잔상이 남고, 화면이 병든 듯 붉게 가라앉는 쪽이에요.
+   ================================================================ */
+.reader.hx { --v: 0; }
+.hx-layer { position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; transition: background .1s; }
+/* 병든 색: 어두운 곳은 핏빛으로, 밝은 곳은 푸르게 바래요 */
+.hx-tint { position: absolute; inset: 0; opacity: calc(var(--v) * .75); mix-blend-mode: overlay;
+  background: radial-gradient(ellipse 70% 60% at 50% 45%, rgba(40, 120, 130, .35), transparent 70%), linear-gradient(180deg, rgba(23, 25, 38, .55), rgba(8, 8, 15, .7)); }
+.hx-vig { position: absolute; inset: 0; opacity: calc(var(--v) * 1); background: radial-gradient(ellipse 72% 66% at 50% 50%, transparent 45%, rgba(4, 0, 2, .82)); }
+/* 고운 주사선 · 아주 옅은 입자 (지지직은 최소로) */
+.hx-scan { position: absolute; inset: 0; opacity: calc(var(--v) * .22); background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .55) 0 1px, transparent 1px 3px); }
+.hx-grain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: calc(var(--v) * .07); mix-blend-mode: screen; }
+/* 느리게 흘러내리는 색 띠 (트래킹) — 절반쯤 깨졌을 때부터 */
+.hx-band { position: absolute; left: 0; right: 0; top: -20vh; height: 16vh; opacity: clamp(0, calc((var(--v) - .4) * 1.8), 1);
+  background: linear-gradient(180deg, transparent, rgba(255, 40, 70, .05) 30%, rgba(120, 255, 240, .07) 52%, rgba(255, 255, 255, .04) 60%, transparent);
+  -webkit-backdrop-filter: blur(1.4px) saturate(2.2) hue-rotate(-30deg); backdrop-filter: blur(1.4px) saturate(2.2) hue-rotate(-30deg);
+  animation: hxBand 9s linear infinite; }
+@keyframes hxBand { to { top: 112vh; } }
+
+/* 절정: 망량 영상이 화면을 찢고 터져 나와요 — 그 위로 VHS 색감 · 주사선이 그대로 덮여요 */
+.hx-tear { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; visibility: hidden; filter: contrast(1.18) saturate(1.15); }
+.hx-tear.on { visibility: visible; animation: hxTearIn .5s steps(1) forwards; }
+@keyframes hxTearIn { 0% { opacity: 1; transform: translateX(-14px) skewX(-6deg); } 12% { opacity: .2; } 20% { opacity: 1; transform: translateX(9px); }
+  32% { opacity: .5; transform: none; } 44% { opacity: 1; transform: translateX(-4px) skewX(3deg); } 56%, 100% { opacity: 1; transform: none; } }
+
+/* 비디오 테이프 화면 표시 — 깨질수록 서서히 떠올라요 */
+.hx-osd { position: absolute; inset: 0; font: 500 13px/1 var(--mono); letter-spacing: .14em; color: rgba(236, 240, 255, .72);
+  opacity: clamp(0, calc((var(--v) - .15) * 1.3), .85);
+  text-shadow: calc(var(--v) * 2px) 0 rgba(255, 30, 70, .6), calc(var(--v) * -2px) 0 rgba(40, 200, 255, .5); }
+.hx-osd > span { position: absolute; }
+.hx-osd .tl { left: 26px; top: 24px; }
+.hx-osd .tr { right: 150px; top: 24px; opacity: .7; }
+.hx-osd .bl { left: 26px; bottom: 24px; }
+.hx-osd .st { animation: hxBlink 1.6s steps(1) infinite; }
+@keyframes hxBlink { 50% { opacity: .25; } }
+.reader.hx-after .hx-osd .st { animation: none; color: rgba(236, 240, 255, .9); }
+.reader.hx-after .hx-layer { animation: hxFadeOut 3.5s ease 2s forwards; }
+@keyframes hxFadeOut { to { opacity: 0; } }
+
+/* 본문과 큰 글자: 색이 갈라지고(빨강 · 청록 어긋남), 잔상이 남고, 바래요 — 세기는 haunt.js 가 필터 값으로 조절 */
+.reader.hx.vhs-on .rd-main, .reader.hx.vhs-on .rd-side { filter: url(#hxRGB); }
+
+/* ================================================================
+   녹화 영상처럼 보이는 VHS 장식은 걷고, 글리치로 — 화면이 가로로 찢어지고 글자가 오른쪽으로 끌려가요
+   (VHS 장식을 다시 쓰려면 아래 display:none 한 줄만 지우면 돼요)
+   ================================================================ */
+.reader.hx .hx-tint, .reader.hx .hx-scan, .reader.hx .hx-band, .reader.hx .hx-grain, .reader.hx .hx-osd { display: none; }
+.reader.hx .hx-vig { opacity: calc(var(--v) * .7); }
+/* 찢어지는 순간 본문이 한 번 덜컥 */
+.reader.hx.hx-jolt .rd-main { transform: translateX(calc(var(--v) * 6px)) skewX(calc(var(--v) * -2.5deg)); }
+.reader.hx.hx-jolt .rd-side .big { transform: translateX(calc(var(--v) * -8px)); }
+
+/* 조부: 검은 네모 두 칸, 그 속 글자가 쉼 없이 바뀌어요 */
+.hx-al.redacted .av { background: #000; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
+.hx-al .rd-x2 { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 3px; background: #000; color: rgba(255, 70, 90, .8);
+  font: normal 700 12px/1 var(--sans); font-style: normal; box-shadow: 0 0 0 1px rgba(255, 255, 255, .06); text-shadow: 1px 0 rgba(0, 220, 255, .5), -1px 0 rgba(255, 0, 60, .6); }
+
+/* 한순간 끊김 */
+.reader.hx-cut .hx-layer { background: #000; }
+.reader.hx-cut .hx-alerts { visibility: hidden; }
+
+/* 재난문자: 오른쪽 아래, 지직거리며 도착 */
+.hx-alerts { position: absolute; right: 22px; bottom: 22px; z-index: 4; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px;
+  width: min(350px, calc(100vw - 32px)); pointer-events: none; }
+.hx-al { --ac: #f0b44c; position: relative; overflow: hidden; padding: 12px 15px 13px; border-radius: 14px; color: #f2f0ee;
+  background: rgba(24, 23, 26, .82); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 18px 40px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .06);
+  animation: hxAlIn .9s linear both; }
+.hx-al.urgent { --ac: #ff6a3d; }
+.hx-al.grave { --ac: #ff2e45; border-color: rgba(255, 46, 69, .35); }
+.hx-al .hd { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font: 600 12.5px var(--sans); }
+.hx-al .ic { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 5px; background: var(--ac); color: #0a0b12; font: 800 12px/1 var(--sans); }
+.hx-al .hd b { color: var(--ac); font-weight: 700; letter-spacing: .02em; }
+.hx-al time { margin-left: auto; font: 500 11px var(--sans); color: rgba(242, 240, 238, .45); }
+.hx-al p { margin: 0; font: 400 13px/1.6 var(--sans); color: rgba(242, 240, 238, .9); word-break: keep-all; overflow-wrap: anywhere; }
+/* 도착할 때 지지직 */
+.hx-al::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; opacity: 0;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .18) 0 1px, transparent 1px 2px, rgba(255, 255, 255, .06) 2px 3px, transparent 3px 5px);
+  animation: hxStatic .9s steps(6) both; }
+@keyframes hxAlIn {
+  0% { opacity: 0; transform: translateY(16px); clip-path: inset(0 0 100% 0); }
+  8% { opacity: 1; transform: translate(-8px, 0); clip-path: inset(0 0 62% 0); }
+  12% { transform: translate(6px, 0); clip-path: inset(30% 0 20% 0); }
+  16% { transform: none; clip-path: inset(0 0 0 0); }
+  22% { opacity: .35; } 26% { opacity: 1; } 34% { transform: translateX(-3px) skewX(-6deg); } 36% { transform: none; }
+  100% { opacity: 1; transform: none; clip-path: inset(0 0 0 0); } }
+@keyframes hxStatic { 0% { opacity: 1; background-position: 0 0; } 80% { opacity: .7; background-position: 0 37px; } 100% { opacity: 0; background-position: 0 60px; } }
+.hx-al.broken { animation: hxAlIn .9s linear both, hxShake .5s steps(2) .9s infinite; }
+.hx-al.broken p, .hx-al.broken .hd b { text-shadow: 2px 0 rgba(255, 40, 70, .7), -2px 0 rgba(60, 200, 255, .6); }
+.hx-al.broken::after { animation: hxStatic .9s steps(6) both; }   /* 도착할 때만 지직 — 그 뒤엔 가로줄이 남지 않아요 */
+@keyframes hxShake { 0% { transform: translate(1px, -1px); } 50% { transform: translate(-2px, 1px) skewX(-2deg); } 100% { transform: none; } }
+/* 5개가 차면 한꺼번에 지직 — 사라짐 */
+.hx-al.gone { animation: hxAlOut .6s linear forwards !important; }
+@keyframes hxAlOut {
+  0% { opacity: 1; } 15% { transform: translateX(-6px) skewX(-8deg); clip-path: inset(20% 0 30% 0); }
+  30% { transform: translateX(5px); clip-path: inset(0 0 60% 0); opacity: .6; } 45% { clip-path: inset(55% 0 0 0); opacity: 1; }
+  100% { opacity: 0; transform: translateX(10px) scaleY(.2); clip-path: inset(48% 0 48% 0); filter: blur(2px); } }
+
+/* 개인 메시지: 조부 / 알 수 없음 */
+.hx-al.sms { --ac: #e9e4de; }
+.hx-al.sms .hd { gap: 10px; }
+.hx-al .av { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(160deg, #6b6460, #222538); color: #f4ece4; font: 400 14px/1 var(--han); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
+.hx-al .who { display: flex; flex-direction: column; gap: 2px; min-width: 0; border: 0; padding: 0; margin: 0; }   /* 사이트 공용 .who 점선 밑줄을 지워요 */
+.hx-al.sms .who b { color: #f6f2ee; font: 700 13px var(--sans); }
+.hx-al .who small { font: 500 10.5px var(--sans); color: rgba(242, 240, 238, .45); }
+.hx-al.sms p { margin-left: 40px; margin-top: -2px; font-size: 14px; }
+.hx-al.sms:not(.unknown) .av { filter: grayscale(1) contrast(1.1); }
+.hx-al.unknown .av { background: #0b0b0c; color: #ff2e45; font: 700 15px/1 var(--sans); box-shadow: inset 0 0 0 1px rgba(255, 46, 69, .5), 0 0 12px rgba(255, 46, 69, .35); }
+.hx-al.unknown .who b { color: #ff5a6c; }
+.hx-al.unknown p { color: #ffd9dd; letter-spacing: .02em; }
+.hx-alerts { max-height: calc(100% - 90px); overflow: hidden; }
+.reader[data-hx="4"] .hx-al:not(.broken), .reader[data-hx="5"] .hx-al:not(.broken) { animation: hxShake .9s steps(2) infinite; }
+
+/* VHS 끈 버전 (haunt.js 의 VHS = false): 페이지 위 잡음 · 주사선 · 테이프 표시 · 색 번짐 · 흔들림 · 울렁임을 걷고, 글자만 깨져요.
+   재난문자 카드의 지지직은 그대로 */
+.reader.no-vhs .hx-grain, .reader.no-vhs .hx-scan, .reader.no-vhs .hx-band, .reader.no-vhs .hx-vig, .reader.no-vhs .hx-osd, .reader.no-vhs .hx-tint { display: none; }
+.reader.no-vhs .rd-main, .reader.no-vhs .rd-side { animation: none !important; filter: none !important; }
+.reader.no-vhs .rd-text, .reader.no-vhs .rd-main h2 { text-shadow: none !important; }
+.reader.no-vhs[data-hx="4"] .rd-side .big, .reader.no-vhs[data-hx="5"] .rd-side .big { animation: none !important; text-shadow: 0 0 50px rgba(200, 22, 29, .5) !important; }
+
+@media (max-width: 760px) {
+  .hx-osd .tr { right: 110px; }
+  .hx-alerts { right: 12px; bottom: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hx-band { display: none; }
+  .reader.hx .rd-main, .reader.hx .rd-side .big, .hx-al, .hx-al.broken, .hx-al::after { animation: none !important; }
+  .reader.hx .rd-main { filter: none !important; }
+}
