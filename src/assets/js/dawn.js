@@ -1,16 +1,4 @@
-/* ================================================================
-   타들어 가는 화면 (두 곳에서 써요)
-   · 卷四 「문이 열리는 한 달」 마지막 — "이제 곧 새벽이 온다." 까지 읽으면
-       새벽빛처럼 화면이 하얗게 덮이고 → 거의 안 보이게 "나를 막아 줘" → 하얀 화면이 좀먹듯 타들어 가며 페이지가 돌아와요
-       (마지막 문장을 누르면 다시 볼 수 있어요)
-   · 卷一 여는 영상 끝 — 먹빛으로 덮인 검은 화면이 타들어 가며 卷一 페이지가 드러나요 (intro.js 가 불러요)
-   타는 모양: 군데군데 먼저 그을다가 구멍이 뚫리고, 진홍빛 불테두리 · 검은 그을음 · 은은한 연기 그림자 · 떠오르는 불씨
 
-   ✏️ 고칠 수 있는 것
-   · EGG / EGG_INK : 卷四 빛 속에 숨은 문구 / 진하기 (0~1, 낮을수록 안 보여요)
-   · T             : 卷四 각 장면 시각 (ms)
-   · EMBERS        : 불씨 양 (프레임당 최대 개수)
-   ================================================================ */
 window.Dawn = (function () {
   const EGG = '나를 막아 줘', EGG_INK = .06, EMBERS = 5;
   const T = { white: 350, egg: 1500, burn: 3700, burnDur: 3800 };
@@ -32,7 +20,7 @@ window.Dawn = (function () {
     g.addColorStop(0, 'rgba(255,255,255,.5)'); g.addColorStop(1, 'rgba(150,118,90,.2)');
     c.fillStyle = g; c.fillRect(0, 0, W, H);
   }
-  // 먹빛 종이 (거의 검정, 결만 아주 옅게)
+
   function blackPaper(c, W, H) {
     c.fillStyle = '#030202'; c.fillRect(0, 0, W, H);
     for (let i = 0; i < 220; i++) {
@@ -56,13 +44,13 @@ window.Dawn = (function () {
     }
     return f;
   }
-  // 불씨 색: 식어 갈수록 흰빛 → 금빛 → 주홍 → 진홍
+
   function heat(t) {
     if (t > .7) { const q = (t - .7) / .3; return [255, 214 + q * 34, 150 + q * 90]; }
     if (t > .35) { const q = (t - .35) / .35; return [255, 110 + q * 104, 50 + q * 100]; }
     const q = t / .35; return [150 + q * 105, 18 + q * 92, 24 + q * 26];
   }
-  // 연보라 불씨 — 하얗게 타오르다 라벤더를 거쳐 잿빛 보라로 식어요
+
   function heatLilac(t) {
     if (t > .65) { const q = (t - .65) / .35; return [236 + q * 19, 230 + q * 25, 255]; }
     if (t > .3) { const q = (t - .3) / .35; return [186 + q * 50, 170 + q * 60, 238 + q * 17]; }
@@ -78,10 +66,6 @@ window.Dawn = (function () {
     return s;
   }
 
-  /* 화면 한 장을 덮었다가 태워 없애요
-     host: 덮을 곳 (이야기 창 / document.body) · o.black: 먹빛 종이 · o.shown: 처음부터 덮인 채로 시작
-     o.egg: 숨은 문구 시각(ms) · o.burn / o.burnDur: 타기 시작 · 타는 시간(ms) · o.fadeIn: 하얗게 덮이는 시각(ms)
-     o.onBurn: 타기 시작할 때 · o.onDone: 다 탔을 때 */
   function burnSheet(host, o) {
     const fixed = host === document.body;
     const W = fixed ? innerWidth : host.clientWidth, H = fixed ? innerHeight : host.clientHeight;
