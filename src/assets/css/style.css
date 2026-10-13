@@ -1,9 +1,5 @@
 /* 붓글씨 폰트: KCC 임권택체 (한국저작권위원회 · 상업적 이용 가능, 눈누 웹폰트) */
 @font-face { font-family: 'KccImKwonTaek'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2202@1.0/KCCImkwontaek.woff') format('woff'); font-weight: normal; font-display: swap; }
-/* ================================================================
-   紅符 — 동양풍 자캐 커뮤니티 스타일 (검정 + 주홍)
-   색을 바꾸고 싶으면 아래 :root 의 값만 고치면 돼요.
-   ================================================================ */
 :root {
   --bg: #07080c;
   --bg-2: #0c0e14;
