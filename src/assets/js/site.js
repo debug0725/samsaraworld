@@ -1,7 +1,4 @@
-/* ================================================================
-   선공개용 공통 스크립트 — 사이트 이름 · 메뉴 · 헤더/푸터 · 모달 · 등장 효과 · 빛 가루 배경
-   (로그인 · 회원 · 저장 기능은 없어요. 메뉴는 아래 NAV 만 고치면 돼요)
-   ================================================================ */
+
 window.SITE_CONFIG = {
   siteName: '三娑罗',
   siteNameKo: '삼사라',
@@ -104,7 +101,6 @@ window.SITE_CONFIG = {
     }
   }
 
-  /* ---------- 빛 가루 배경 (가볍게: 초당 30번, 탭이 안 보이면 쉼) ---------- */
   function embers() {
     const c = document.createElement('canvas');
     c.className = 'embers'; document.body.prepend(c);
@@ -133,9 +129,6 @@ window.SITE_CONFIG = {
     size(); addEventListener('resize', size); requestAnimationFrame(draw);
   }
 
-  /* ---------- 소스 보기 막기 (가벼운 방지 장치) ----------
-     오른쪽 클릭 · F12 · 개발자 도구 단축키 · 소스 보기 · 저장 단축키를 막아요.
-     ※ 브라우저에 보이는 파일은 원리상 완전히 숨길 수는 없어요. */
   addEventListener('contextmenu', e => { if (!e.target.closest('input, textarea')) e.preventDefault(); });
   addEventListener('keydown', e => {
     const k = (e.key || '').toLowerCase(), mod = e.ctrlKey || e.metaKey;
