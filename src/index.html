@@ -42,12 +42,32 @@ App.ready.then(async () => {
   $('#hero-name').innerHTML = [...(C.siteName || '')].map((ch, i) => `<span style="--i:${i}">${esc(ch)}</span>`).join('');
   // 영상 소리 켜고 끄기 (브라우저 정책상 처음엔 음소거로 자동재생)
   const vid = $('#hero-video'), snd = $('#sound');
-  snd.onclick = () => {
-    vid.muted = !vid.muted; if (!vid.muted) vid.play();
-    snd.classList.toggle('on', !vid.muted); snd.setAttribute('aria-pressed', String(!vid.muted));
-    $('#sound-t').textContent = vid.muted ? 'SOUND OFF' : 'SOUND ON';
-    dispatchEvent(new CustomEvent('naru:video-sound', { detail: !vid.muted }));
+  if (REDUCED) vid.pause();
+  const setBtn = on => { snd.classList.toggle('on', on); snd.setAttribute('aria-pressed', String(on)); $('#sound-t').textContent = on ? 'SOUND ON' : 'SOUND OFF'; };
+
+  const BGM = 'https://youtu.be/8GTm7U9ZubA?si=0LYyAHrPdiIpAv4Z';
+  const BGM_VOLUME = 40;   // 0 ~ 100
+
+  const ytId = (BGM.match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/|live\/)([\w-]{11})/) || [])[1];
+  if (!ytId) {
+    snd.onclick = () => { vid.muted = !vid.muted; if (!vid.muted) vid.play(); setBtn(!vid.muted); };
+    return;
+  }
+  let yt = null, ready = false, on = false, wanted = false;
+  const box = document.createElement('div'); box.id = 'yt-bgm';
+  box.style.cssText = 'position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0;pointer-events:none';
+  document.body.appendChild(box);
+  const apply = () => { if (!ready) return; if (wanted) { yt.unMute(); yt.setVolume(BGM_VOLUME); yt.playVideo(); } else yt.pauseVideo(); };
+  window.onYouTubeIframeAPIReady = () => {
+    yt = new YT.Player('yt-bgm', {
+      videoId: ytId, width: 2, height: 2,
+      playerVars: { autoplay: 0, controls: 0, disablekb: 1, loop: 1, playlist: ytId, playsinline: 1, rel: 0 },
+      events: { onReady: () => { ready = true; apply(); }, onStateChange: e => { on = e.data === 1; setBtn(on); } }
+    });
   };
+  const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
+  snd.onclick = e => { e.stopPropagation(); wanted = !wanted; setBtn(wanted); apply(); };
+  addEventListener('pointerdown', e => { if (e.target.closest('#sound')) return; wanted = true; setBtn(true); apply(); }, { once: true });
   if (REDUCED) vid.pause();
 });
 </script>
