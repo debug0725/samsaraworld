@@ -1,15 +1,6 @@
-/* ================================================================
-   卷一 「서녘의 문」 여는 영상 (assets/video/west.mp4)
-   ① 영상이 화면 가득 재생되고, 빛나는 나비(넋) 몇 마리가 소녀 곁을 맴돌아요
-   ② 영상 속 검은 띠가 덮쳐 올 때, 가장자리에서 먹 안개가 밀려들고 소녀에게서 빛나는 나비 떼가 날아올라요
-   ③ 화면이 완전히 검게 덮이면 그 아래로 이야기 창이 열리고
-   ④ 안개가 갈라지며 걷히고, 나비들은 페이지 위로 흩어져 날아가요
-   SKIP 버튼 / Esc 로 건너뛸 수 있어요.
 
-   ✏️ 고칠 수 있는 것: COVER(먹 안개가 밀려들기 시작하는 영상 시각, 초) / FLOCK(터져 나오는 나비 수) / AMBIENT(맴도는 나비 수)
-   ================================================================ */
 window.Intro = (function () {
-  const BURN_LEAD = 1.0, COVER = 3.8, COVER_DUR = 1.15, REVEAL_DUR = 1.6, FLOCK = 0, AMBIENT = 0;   // 나비는 뺐어요 (다시 넣으려면 숫자만 올리면 돼요)
+  const BURN_LEAD = 1.0, COVER = 3.8, COVER_DUR = 1.15, REVEAL_DUR = 1.6, FLOCK = 0, AMBIENT = 0; 
   const R = Math.random, TAU = Math.PI * 2;
   const ease = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
   const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,10 +8,6 @@ window.Intro = (function () {
   // 미리 불러 둬서 카드를 누르면 바로 나오게
   function preload(src) { if (cache[src]) return cache[src]; const v = document.createElement('video'); v.src = src; v.muted = true; v.playsInline = true; v.preload = 'auto'; v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.load(); return cache[src] = v; }
 
-  /* ---------- 붉은 빛나비 (넋) ----------
-     몽환적인 반투명 나비. 날개 가장자리에서 붉은 빛이 붓질처럼 안쪽으로 번져 들고,
-     속은 고운 입자로 비치며, 테두리엔 가는 빛 심이 흘러요. 몸통도 투명하게 빛나요.
-     날개 한 장 한 장은 처음에 한 번만 빛 그림으로 구워 두고, 날갯짓할 때 3D 로 접었다 펴요. */
   const GLOW = { core: '255,226,230', edge: '255,92,110', hue: '220,24,48' };   // 붉은 빛. 푸른 넋빛: { core:'255,255,255', edge:'196,226,255', hue:'120,170,255' }
   const TILT = .55;                              // 내려다보는 각도
   const SP = Math.sin(TILT), CP = Math.cos(TILT);
@@ -143,7 +130,7 @@ window.Intro = (function () {
     }
     c.restore();
   }
-  // 나는 법: 느리고 크게 날갯짓 → 날개를 편 채 미끄러지듯 활공 → 다시 몇 번 날갯짓. 방향은 부드럽게 휘어져요
+
   function fly(b, dt) {
     b.t += dt;
     if (b.glide > 0) b.glide -= dt;
@@ -305,8 +292,7 @@ window.Intro = (function () {
     const go = () => { const p = v.play(); if (p && p.catch) p.catch(() => cover()); raf = requestAnimationFrame(frame); };
     if (v.readyState >= 3) go(); else { v.addEventListener('canplay', go, { once: true }); setTimeout(() => { if (!raf) go(); }, 2500); }
   }
-  /* ---------- 장 사이 전환 영상 (卷二 → 卷三: assets/video/mangryang.mp4) ----------
-     화면을 찢듯 영상이 덮쳐 오고, 끝나면 다음 장이 열려요. from = 몇 초부터 틀지 (앞부분 건너뛰기). 누르면 건너뛰어요 */
+
   function tear(src, from, onEnd) {
     if (reduced()) { onEnd(); return; }
     const v = preload(src), ov = document.createElement('div'); ov.className = 'tear-ov'; ov.setAttribute('aria-hidden', 'true');
