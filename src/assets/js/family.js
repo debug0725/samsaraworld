@@ -4,6 +4,7 @@
    · role: 이름 위 작은 글씨 (예: '큰아버지')
    · erased: true  → 호적에서 파인 사람 (이름에 먹칠 + 除籍 도장)
    · masked: true  → 이름이 가려진 사람 (예: '한 **')
+   · small: true   → 별과 이름을 조금 작게
    · wives: [...]  → 누르면 부인들이 펼쳐지는 사람
    · ghosts: 숫자 → 호적에 올리지 않은 빈 문패 개수 (흐릿하게 표시)
    · short: 궤도 아래·메뉴에 뜨는 짧은 이름 / desc: 오른쪽 판에 뜨는 소개글
@@ -46,7 +47,7 @@ window.FAMILY = {
       id: 'hwajin', name: '문외천인', short: '문외천인', han: '門外賤人', tone: 'jade', rank: 2, from: 'seoul',
       desc: '경파를 배신하고 나간 서문 화진의 씨로 유성근 사이 쌍둥이 남매를 두었다.',
       couple: [
-        { name: '서문 화진', desc: '경파 가주의 유일한 딸이었으나 현가의 입양아인 유성근과 눈이 맞아 아버지를 스스로 칼로 찔러 나갔다고 알려져 있다' },
+        { name: '서문 화진', desc: '경파 가주의 장녀였으나 현가의 입양아인 유성근과 눈이 맞아 아버지를 스스로 칼로 찔러 나갔다고 알려져 있다' },
         { name: '유성근', desc: '고독으로 유명한 현가 가문의 입양아로 알려진 정보는 없으나 무명 배우로 활동하기도 했다' }
       ],
       kids: [
@@ -65,8 +66,11 @@ window.FAMILY = {
         { name: '서문 재혁', desc: '경파의 장남이자 차기 가주로 현재는 서울대에서 역사학을 가르치고 있다' },
         { name: '서문 재원', desc: '경파의 차남으로 집안에 들어오는 의뢰를 도맡고 재정을 관리하고 있다' },
         { name: '서문 재희', desc: '현 대통령의 수행 비서로 활동하기에 본가에서 열리는 잔치 및 경사에도 종종 모습을 드러내지 않는다' },
-        { name: '서문 재민', desc: '경파의 넷째로 연예계에서 배우로 활동하고 있으며 최근 천만 영화의 조연으로 이름을 알리고 있다' },
-        { name: '서문 재영', desc: '경파의 다섯째로 막내이며 외동딸이라는 메리트로 인하여 서울의 금싸라기 건물을 독채로 굴리고 있다' }
+        { name: '서문 재신', small: true, desc: '경파의 넷째로 태화건설 창업주의 장손녀와 혼인하여 현재 그룹 부회장으로서 경영 실권을 쥐고 있다' },
+        { name: '서문 재윤', small: true, desc: '경파의 다섯째 아들. 글로벌 비즈니스 항공 그룹의 회장으로, 세계 각국을 무대로 전용기 운항 및 관리 사업을 이끌고 있다.' },
+        { name: '서문 재민', desc: '경파의 여섯째로 연예계에서 배우로 활동하고 있으며 최근 천만 영화의 조연으로 이름을 알리고 있다' },
+        { name: '서문 재영', desc: '경파의 막내이며 막내딸이라는 메리트로 인하여 서울의 금싸라기 건물을 독채로 굴리고 있다' },
+        { name: '서문 연', small: true, desc: '경파의 전 둘째 딸. 혼전 임신이란 충격적인 소식과 함께 가문과의 사이가 급속도로 나빠졌다. 가문을 박차고 나갔다.' }
       ]
     },
     {
@@ -166,7 +170,7 @@ window.FAMILY = {
   // 별 하나 (사람 하나)
   function star(p, k, x, y, H, d, cls) {
     const [sur, given] = split(p.name);
-    const c = ['cs', cls, p.erased ? 'erased' : '', p.masked ? 'masked' : '', p.wives ? 'has-wives' : ''].join(' ');
+    const c = ['cs', cls, p.erased ? 'erased' : '', p.masked ? 'masked' : '', p.wives ? 'has-wives' : '', p.small ? 'small' : ''].join(' ');
     return `<button type="button" class="${c}" data-k="${k}" style="left:${(x / 6).toFixed(2)}%;top:${(y / H * 100).toFixed(2)}%;--d:${d.toFixed(2)}s;--g:${(k * 1.3 % 3.6).toFixed(1)}s"${p.erased ? ' title="호적에서 파인 이름"' : ''}>
       <span class="sp"><i></i></span>${p.wives ? `<span class="sat" aria-hidden="true"><i></i><i></i><i></i></span>` : ''}
       <span class="nm">${p.role ? `<small>${E(p.role)}</small>` : ''}${sur ? `<i>${E(sur)}</i>` : ''}<b>${E(given)}${p.erased ? SCRIB() : ''}</b>${p.erased ? '<em class="seal">除籍</em>' : ''}${p.wives ? `<em class="cnt">妻妾 ${hanNum(p.wives.length)}</em>` : ''}</span>
