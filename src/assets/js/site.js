@@ -7,7 +7,6 @@ window.SITE_CONFIG = {
 
 (function () {
   const C = window.SITE_CONFIG;
-  // ✏️ 메뉴 — [페이지 키, 주소, 이름, 한자, 새 탭으로 열지]
   const NAV = [
     ['home', 'index.html', '소개', '序'],
     ['world', 'world.html', '세계관', '界'],
