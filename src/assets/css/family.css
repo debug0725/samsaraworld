@@ -1,3 +1,7 @@
+/* ================================================================
+   가계도 — 옻칠한 가문 판(板)에 이름 문패가 하나씩 걸리는 모양
+   순서: 판이 위에서 아래로 펼쳐짐 → 현판이 흔들리며 걸림 → 부부 문패 → 이음줄이 그려짐 → 자녀 문패가 차례로 걸림
+   ================================================================ */
 .family { --gold: #c9a55a; --gold-dim: rgba(201, 165, 90, .35); --wood: #0b0c14; --ez2: cubic-bezier(.22, .7, .2, 1); position: relative; }
 .fm-tree { display: grid; gap: 0; }
 .fm-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 26px; }
@@ -479,3 +483,20 @@
 .cs.small .nm b { font-size: 12px; }
 .cs.small .nm i { font-size: 8px; }
 .cs.small .nm { top: calc(100% + 5px); }
+
+/* also: 명패 아래로 붉은 실이 내려와 한 사람이 더 드러나요 */
+.fo-also { position: relative; margin-top: 14px; }
+.fo-thread { display: block; height: 30px; position: relative; }
+.fo-thread i { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; translate: -50% 0; background: linear-gradient(#d4342c, rgba(212, 52, 44, .35)); box-shadow: 0 0 6px rgba(212, 52, 44, .7); transform-origin: top; animation: foThread .55s cubic-bezier(.3, .8, .3, 1) .45s both; }
+.fo-thread i::after { content: ""; position: absolute; left: 50%; bottom: -3px; width: 6px; height: 6px; translate: -50% 0; rotate: 45deg; background: #d4342c; box-shadow: 0 0 8px #d4342c; animation: foFade .3s ease .95s both; }
+.fo-also-c { position: relative; padding: 14px 14px 12px; border: 1px solid rgba(212, 52, 44, .35); background: linear-gradient(180deg, rgba(212, 52, 44, .09), rgba(212, 52, 44, .02)); animation: foUnfold .5s cubic-bezier(.3, .8, .3, 1) .9s both; transform-origin: top; }
+.fo-also-c small { display: block; font: 500 10px var(--sans); letter-spacing: .14em; color: #e9a19b; animation: foFade .4s ease 1s both; }
+.fo-also-c b { display: block; margin: 4px 0 8px; font: 400 24px/1.15 var(--brush); color: #f6ead8; }
+.fo-also-c b span { display: inline-block; animation: foInk .7s ease var(--d) both; }
+.fo-also-c p { margin: 0; padding-top: 8px; border-top: 1px solid rgba(212, 52, 44, .2); font: 400 13px/1.75 var(--body-serif); color: #d9d6d0; text-align: justify; animation: foReveal 1.1s ease 1.35s both; }
+@keyframes foThread { from { transform: scaleY(0); } }
+@keyframes foFade { from { opacity: 0; } }
+@keyframes foUnfold { from { opacity: 0; transform: scaleY(.6); filter: blur(4px); } }
+@keyframes foInk { from { opacity: 0; filter: blur(8px); transform: scale(1.35); } 60% { opacity: 1; } }
+@keyframes foReveal { from { clip-path: inset(0 100% 0 0); opacity: .3; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .fo-also *, .fo-also-c { animation: none !important; } }
