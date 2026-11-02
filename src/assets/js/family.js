@@ -6,6 +6,7 @@
    · masked: true  → 이름이 가려진 사람 (예: '한 **')
    · small: true   → 별과 이름을 조금 작게
    · wives: [...]  → 누르면 부인들이 펼쳐지는 사람
+   · also: { name, role, desc } → 누르면 명패 아래로 붉은 실이 내려와 한 사람 더 떠요 (가계도 별엔 없는 사람)
    · ghosts: 숫자 → 호적에 올리지 않은 빈 문패 개수 (흐릿하게 표시)
    · short: 궤도 아래·메뉴에 뜨는 짧은 이름 / desc: 오른쪽 판에 뜨는 소개글
    ================================================================ */
@@ -60,7 +61,8 @@ window.FAMILY = {
       id: 'seoul', name: '경파', short: '경파', han: '京派', tone: 'steel', rank: 4,
       desc: '서문의 다른 경로로 서울에 터를 잡고 있다.',
       couple: [
-        { name: '서문 태준', desc: '서문 백의 형제로 서울에 터전을 옮겨 새로운 서문의 가르침을 잇고 있다' },
+        { name: '서문 태준', desc: '서문 백의 형제로 서울에 터전을 옮겨 새로운 서문의 가르침을 잇고 있다',
+          also: { name: '서문 태령', role: '누이 · 妹', desc: '본가 가주의 여동생으로 경파의 재정을 담당하던 중 일반인 남편과 결혼하여 슬하에 주술사 자녀를 두고 있다' } },
         { name: '오미령', desc: '서문의 두 번째 안주인으로 윤옥란과는 사이가 좋지 않다 소문으로는 파라다이스시티와 연관이 있다고 한다' }
       ],
       kids: [
@@ -73,6 +75,7 @@ window.FAMILY = {
         { name: '서문 재헌', small: true, desc: '경파의 일곱째로 국립중앙박물관 보존과학부 학예연구관으로 서화 · 지류 보존을 전문으로 한다' },
         { name: '서문 재율', small: true, desc: '경파의 여덟째로 서울대학병원 전문의로 인간의 생과 사의 갈림길을 통제하고 거물들을 치료하며 의료계의 실권을 쥐고 있다' },
         { name: '서문 재영', desc: '경파의 막내이며 막내딸이라는 메리트로 인하여 서울의 금싸라기 건물을 독채로 굴리고 있다' },
+        { name: '서문 연', small: true, desc: '경파의 전 둘째 딸. 혼전 임신이란 충격적인 소식과 함께 가문과의 사이가 급속도로 나빠졌다. 가문을 박차고 나갔다.' }
       ]
     },
     {
@@ -268,7 +271,13 @@ window.FAMILY = {
     const wives = p.wives ? `<div class="fo-wlab"><i></i>妻妾 · 부인 ${p.wives.length}명<i></i></div><div class="fo-wrow">${p.wives.map((w, i) =>
       `<span class="ws ${/첩|妾/.test(w.role) ? 'concubine' : ''}" style="--d:${(.15 + i * .12).toFixed(2)}s"><span class="sp"><i></i></span><small>${E(w.role || '')}</small><b>${E(w.name)}</b></span>`).join('')}</div>` : '';
     return `<div class="fo-pop tone-${E(h.tone)}"><button class="fo-px" aria-label="닫기">✕</button>
-      <small>${E(p.role || h.han)}</small><b class="${p.erased ? 'er' : ''}">${E(p.name)}${p.erased ? SCRIB() : ''}</b><p>${E(rel)}</p>${p.desc ? `<p class="fo-desc">${E(p.desc)}</p>` : ''}${wives}</div>`;
+      <small>${E(p.role || h.han)}</small><b class="${p.erased ? 'er' : ''}">${E(p.name)}${p.erased ? SCRIB() : ''}</b><p>${E(rel)}</p>${p.desc ? `<p class="fo-desc">${E(p.desc)}</p>` : ''}${wives}${p.also ? alsoCard(p.also) : ''}</div>`;
+  }
+  // 한 사람 더: 붉은 실이 내려오고 → 이름이 먹처럼 번져 나오고 → 소개가 한 줄씩 드러나요
+  function alsoCard(a) {
+    return `<div class="fo-also"><span class="fo-thread"><i></i></span><div class="fo-also-c">
+      <small>${E(a.role || '')}</small><b>${[...a.name].map((ch, i) => ch === ' ' ? ' ' : `<span style="--d:${(.95 + i * .09).toFixed(2)}s">${E(ch)}</span>`).join('')}</b>
+      <p>${E(a.desc || '')}</p></div></div>`;
   }
 
   window.renderFamily = function (root) {
